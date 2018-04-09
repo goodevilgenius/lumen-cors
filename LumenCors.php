@@ -15,10 +15,10 @@ class LumenCors {
         if (is_callable($origin)) {
             // Call origin callback with request origin
             $origin = call_user_func($origin,
-                                    $req->header("Origin")
+                                    $req->headers->get("Origin")
                                     );
         }
-        $rsp->header('Access-Control-Allow-Origin', $origin);
+        $rsp->headers->set('Access-Control-Allow-Origin', $origin);
     }
 
     protected function setExposeHeaders($req, $rsp) {
@@ -28,19 +28,19 @@ class LumenCors {
                 $exposeHeaders = implode(", ", $exposeHeaders);
             }
             
-            $rsp->header('Access-Control-Expose-Headers', $exposeHeaders);
+            $rsp->headers->set('Access-Control-Expose-Headers', $exposeHeaders);
         }
     }
 
     protected function setMaxAge($req, $rsp) {
         if (isset($this->settings['maxAge'])) {
-            $rsp->header('Access-Control-Max-Age', $this->settings['maxAge']);
+            $rsp->headers->set('Access-Control-Max-Age', $this->settings['maxAge']);
         }
     }
 
     protected function setAllowCredentials($req, $rsp) {
         if (isset($this->settings['allowCredentials']) && $this->settings['allowCredentials'] === True) {
-            $rsp->header('Access-Control-Allow-Credentials', 'true');
+            $rsp->headers->set('Access-Control-Allow-Credentials', 'true');
         }
     }
 
@@ -51,7 +51,7 @@ class LumenCors {
                 $allowMethods = implode(", ", $allowMethods);
             }
             
-            $rsp->header('Access-Control-Allow-Methods', $allowMethods);
+            $rsp->headers->set('Access-Control-Allow-Methods', $allowMethods);
         }
     }
 
@@ -63,11 +63,11 @@ class LumenCors {
             }
         }
         else {  // Otherwise, use request headers
-            $allowHeaders = $req->header("Access-Control-Request-Headers");
+            $allowHeaders = $req->headers->get("Access-Control-Request-Headers");
         }
 
         if (isset($allowHeaders)) {
-            $rsp->header('Access-Control-Allow-Headers', $allowHeaders);
+            $rsp->headers->set('Access-Control-Allow-Headers', $allowHeaders);
         }
     }
 
