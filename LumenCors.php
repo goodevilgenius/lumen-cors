@@ -1,7 +1,8 @@
 <?php namespace palanik\lumen\Middleware;
 
 use Closure;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 class LumenCors {
 
@@ -10,6 +11,12 @@ class LumenCors {
                 'allowMethods' => 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS',
                 );
 
+    /**
+     * Set Access-Control-Allow-Origin on Response.
+     *
+     * @param  Request  $req
+     * @return Response
+     */
     protected function setOrigin($req, $rsp) {
         $origin = $this->settings['origin'];
         if (is_callable($origin)) {
@@ -21,6 +28,12 @@ class LumenCors {
         $rsp->headers->set('Access-Control-Allow-Origin', $origin);
     }
 
+    /**
+     * Set Access-Control-Expose-Headers on Response.
+     *
+     * @param  Request  $req
+     * @return Response
+     */
     protected function setExposeHeaders($req, $rsp) {
         if (isset($this->settings['exposeHeaders'])) {
             $exposeHeaders = $this->settings['exposeHeaders'];
@@ -32,18 +45,36 @@ class LumenCors {
         }
     }
 
+    /**
+     * Set Access-Control-Max-Age on Response.
+     *
+     * @param  Request  $req
+     * @return Response
+     */
     protected function setMaxAge($req, $rsp) {
         if (isset($this->settings['maxAge'])) {
             $rsp->headers->set('Access-Control-Max-Age', $this->settings['maxAge']);
         }
     }
 
+    /**
+     * Set Access-Control-Allow-Credentials on Response.
+     *
+     * @param  Request  $req
+     * @return Response
+     */
     protected function setAllowCredentials($req, $rsp) {
         if (isset($this->settings['allowCredentials']) && $this->settings['allowCredentials'] === True) {
             $rsp->headers->set('Access-Control-Allow-Credentials', 'true');
         }
     }
 
+    /**
+     * Set Access-Control-Allow-Methods on Response.
+     *
+     * @param  Request  $req
+     * @return Response
+     */
     protected function setAllowMethods($req, $rsp) {
         if (isset($this->settings['allowMethods'])) {
             $allowMethods = $this->settings['allowMethods'];
@@ -55,6 +86,12 @@ class LumenCors {
         }
     }
 
+    /**
+     * Set Access-Control-Allow-Headers on Response.
+     *
+     * @param  Request  $req
+     * @return Response
+     */
     protected function setAllowHeaders($req, $rsp) {
         if (isset($this->settings['allowHeaders'])) {
             $allowHeaders = $this->settings['allowHeaders'];
@@ -71,6 +108,12 @@ class LumenCors {
         }
     }
 
+    /**
+     * Set all needed Cors Headers on Response.
+     *
+     * @param  Request  $req
+     * @return Response
+     */
     protected function setCorsHeaders($req, $rsp) {
 
         // http://www.html5rocks.com/static/images/cors_server_flowchart.png
@@ -92,8 +135,8 @@ class LumenCors {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param  Request $request
+     * @param  Closure $next
      * @return mixed
      */
     public function handle($request, Closure $next) {
